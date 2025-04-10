@@ -133,14 +133,34 @@ services:
 volumes:
   esdata01:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/esdata01
   infinity_data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/infinity_data
   mysql_data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/mysql_data
   minio_data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/minio_data
   redis_data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/redis_data
 
 networks:
   ragflow:
