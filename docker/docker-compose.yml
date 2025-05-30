@@ -39,6 +39,7 @@ services:
       - TZ=${TIMEZONE}
       - HF_ENDPOINT=${HF_ENDPOINT}
       - MACOS=${MACOS}
+      - LM_TIMEOUT_SECONDS=1200
     networks:
       - ragflow
     restart: on-failure
