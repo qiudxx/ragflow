@@ -149,6 +149,7 @@ services:
       --tls_version="TLSv1.2,TLSv1.3"
       --init-file /data/application/init.sql
       --binlog_expire_logs_seconds=604800
+      --bind-address=0.0.0.0  # 允许所有地址访问
     ports:
       - ${MYSQL_PORT}:3306
     volumes:
