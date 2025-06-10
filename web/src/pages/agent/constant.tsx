@@ -27,17 +27,22 @@ import { ReactComponent as TemplateIcon } from '@/assets/svg/template.svg';
 import { ReactComponent as TuShareIcon } from '@/assets/svg/tushare.svg';
 import { ReactComponent as WenCaiIcon } from '@/assets/svg/wencai.svg';
 import { ReactComponent as YahooFinanceIcon } from '@/assets/svg/yahoo-finance.svg';
+import {
+  initialKeywordsSimilarityWeightValue,
+  initialSimilarityThresholdValue,
+} from '@/components/similarity-slider';
 import { CodeTemplateStrMap, ProgrammingLanguage } from '@/constants/agent';
 
 export enum AgentDialogueMode {
-  Conversational = 'Conversational',
-  Task = 'Task',
+  Conversational = 'conversational',
+  Task = 'task',
 }
 
 import {
   ChatVariableEnabledField,
   variableEnabledFieldMap,
 } from '@/constants/chat';
+import { ModelVariableType } from '@/constants/knowledge';
 import i18n from '@/locales/config';
 import { setInitialChatVariableEnabledFieldValue } from '@/utils/chat';
 
@@ -58,6 +63,7 @@ import {
 } from '@ant-design/icons';
 import upperFirst from 'lodash/upperFirst';
 import {
+  Box,
   CirclePower,
   CloudUpload,
   CodeXml,
@@ -111,6 +117,7 @@ export enum Operator {
   IterationStart = 'IterationItem',
   Code = 'Code',
   WaitingDialogue = 'WaitingDialogue',
+  Agent = 'Agent',
 }
 
 export const CommonOperatorList = Object.values(Operator).filter(
@@ -131,6 +138,7 @@ export const AgentOperatorList = [
   Operator.Iteration,
   Operator.WaitingDialogue,
   Operator.Note,
+  Operator.Agent,
 ];
 
 export const operatorIconMap = {
@@ -172,6 +180,7 @@ export const operatorIconMap = {
   [Operator.IterationStart]: CirclePower,
   [Operator.Code]: CodeXml,
   [Operator.WaitingDialogue]: MessageSquareMore,
+  [Operator.Agent]: Box,
 };
 
 export const operatorMap: Record<
@@ -312,6 +321,7 @@ export const operatorMap: Record<
   [Operator.IterationStart]: { backgroundColor: '#e6f7ff' },
   [Operator.Code]: { backgroundColor: '#4c5458' },
   [Operator.WaitingDialogue]: { backgroundColor: '#a5d65c' },
+  [Operator.Agent]: { backgroundColor: '#a5d65c' },
 };
 
 export const componentMenuList = [
@@ -354,6 +364,9 @@ export const componentMenuList = [
   },
   {
     name: Operator.WaitingDialogue,
+  },
+  {
+    name: Operator.Agent,
   },
   {
     name: Operator.Note,
@@ -428,10 +441,20 @@ const initialQueryBaseValues = {
 };
 
 export const initialRetrievalValues = {
-  similarity_threshold: 0.2,
-  keywords_similarity_weight: 0.3,
-  top_n: 8,
-  ...initialQueryBaseValues,
+  query: '',
+  top_n: 0.2,
+  top_k: 1024,
+  kb_ids: [],
+  rerank_id: '',
+  empty_response: '',
+  ...initialSimilarityThresholdValue,
+  ...initialKeywordsSimilarityWeightValue,
+  outputs: {
+    formalized_content: {
+      type: 'string',
+      value: '',
+    },
+  },
 };
 
 export const initialBeginValues = {
@@ -477,6 +500,7 @@ export const initialRelevantValues = {
 
 export const initialCategorizeValues = {
   ...initialLlmBaseValues,
+  parameter: ModelVariableType.Precise,
   message_history_window_size: 1,
   category_description: {},
   ...initialQueryBaseValues,
@@ -680,6 +704,29 @@ export const initialCodeValues = {
 
 export const initialWaitingDialogueValues = {};
 
+export const initialAgentValues = {
+  ...initialLlmBaseValues,
+  sys_prompt: ``,
+  prompts: [],
+  message_history_window_size: 12,
+  tools: [],
+  outputs: {
+    structured_output: {
+      // topic: {
+      //   type: 'string',
+      //   description:
+      //     'default:general. The category of the search.news is useful for retrieving real-time updates, particularly about politics, sports, and major current events covered by mainstream media sources. general is for broader, more general-purpose searches that may include a wide range of sources.',
+      //   enum: ['general', 'news'],
+      //   default: 'general',
+      // },
+    },
+    content: {
+      type: 'string',
+      value: '',
+    },
+  },
+};
+
 export const CategorizeAnchorPointPositions = [
   { top: 1, right: 34 },
   { top: 8, right: 18 },
@@ -763,6 +810,7 @@ export const RestrictedUpstreamMap = {
   [Operator.IterationStart]: [Operator.Begin],
   [Operator.Code]: [Operator.Begin],
   [Operator.WaitingDialogue]: [Operator.Begin],
+  [Operator.Agent]: [Operator.Begin],
 };
 
 export const NodeMap = {
@@ -804,6 +852,7 @@ export const NodeMap = {
   [Operator.IterationStart]: 'iterationStartNode',
   [Operator.Code]: 'ragNode',
   [Operator.WaitingDialogue]: 'ragNode',
+  [Operator.Agent]: 'agentNode',
 };
 
 export const LanguageOptions = [
