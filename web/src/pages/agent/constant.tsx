@@ -31,7 +31,11 @@ import {
   initialKeywordsSimilarityWeightValue,
   initialSimilarityThresholdValue,
 } from '@/components/similarity-slider';
-import { CodeTemplateStrMap, ProgrammingLanguage } from '@/constants/agent';
+import {
+  AgentGlobals,
+  CodeTemplateStrMap,
+  ProgrammingLanguage,
+} from '@/constants/agent';
 
 export enum AgentDialogueMode {
   Conversational = 'conversational',
@@ -50,6 +54,11 @@ import { setInitialChatVariableEnabledFieldValue } from '@/utils/chat';
 export enum Channel {
   Text = 'text',
   News = 'news',
+}
+
+export enum PromptRole {
+  User = 'user',
+  Assistant = 'assistant',
 }
 
 import {
@@ -442,7 +451,7 @@ const initialQueryBaseValues = {
 
 export const initialRetrievalValues = {
   query: '',
-  top_n: 0.2,
+  top_n: 8,
   top_k: 1024,
   kb_ids: [],
   rerank_id: '',
@@ -707,7 +716,7 @@ export const initialWaitingDialogueValues = {};
 export const initialAgentValues = {
   ...initialLlmBaseValues,
   sys_prompt: ``,
-  prompts: [],
+  prompts: [{ role: PromptRole.User, content: `{${AgentGlobals.SysQuery}}` }],
   message_history_window_size: 12,
   tools: [],
   outputs: {
